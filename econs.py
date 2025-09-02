@@ -610,7 +610,27 @@ if not prices_df.empty and not value_index.empty:
     with mc_cols[1]:
         mc_paths = st.number_input("Number of paths", 100, 5000, 1000, 100)
     with mc_cols[2]:
-        start_value = st.number_input("Starting value", 50.0, 200.0, float(value_index.iloc[-1]), 10.0)
+        with st.sidebar:
+            # --- Dynamic number input for Starting Value ---
+            last_value = float(value_index.iloc[-1])
+
+    min_val = 50.0
+    max_val = max(200.0, last_value)
+    default_val = min(max(last_value, min_val), max_val)
+
+    start_value = st.number_input(
+        "Starting value",
+        min_value=min_val,
+        max_value=max_val,
+        value=default_val,
+        step=10.0
+    )
+
+    if last_value > 200.0:
+        st.warning(f"Note: Max value increased to {max_val:.2f} to fit latest data.")
+
+
+
     with mc_cols[3]:
         mc_seed = st.number_input("Random seed", 0, 999, 42, 1)
     
